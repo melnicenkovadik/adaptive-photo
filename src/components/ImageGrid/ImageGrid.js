@@ -1,47 +1,48 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Button from '../Button';
-import { loadImages } from '../../actions';
-import './styles.css';
+import {loadImages} from '../../actions';
+import {Button, Container, Modal, Row} from "react-bootstrap";
+import ImageChild from "./Image";
 
-class ImageGrid extends Component {
-    componentDidMount() {
-        this.props.loadImages();
-    }
 
-    render() {
-        const { isLoading, images, loadImages, error } = this.props;
-        return (
-            <div className="content">
-                <section className="grid">
-                    {images.map(image => (
-                        <div
-                            key={image.id}
-                            className={`item item-${Math.ceil(
-                                image.height / image.width,
-                            )}`}
-                        >
-                            <img
-                                src={image.url}
-                                alt={image.id}
-                            />
-                        </div>
-                    ))}
-                </section>
-                {error && <div className="error">{JSON.stringify(error)}</div>}
-                <Button
-                    onClick={() => !isLoading && loadImages()}
-                    loading={isLoading}
-                >
-                    Load More
-                </Button>
-            </div>
-        );
-    }
+const ImageGrid = (props) => {
+    const [modalShow, setModalShow] = React.useState(false);
+
+    useEffect(() => {
+        loadImages()
+    }, [])
+
+
+    const {images, loadImages} = props;
+    return (
+        <Container>
+            <br/>
+
+            <Row>
+
+                {images.map(image => (
+                    <Button key={image.id} variant="light" onClick={() => setModalShow(true)}>
+                        <ImageChild loadImages={loadImages} image={image}/>
+                    </Button>
+
+                ))}
+            </Row>
+
+            <MyVerticallyCenteredModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+            />
+
+        </Container>
+
+
+    )
+        ;
 }
 
-const mapStateToProps = ({ isLoading, images, error }) => ({
+const mapStateToProps = ({isLoading, images, error}) => ({
     isLoading,
     images,
     error,
@@ -56,3 +57,27 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps,
 )(ImageGrid);
+
+function MyVerticallyCenteredModal(props) {
+
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Modal heading
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                cosad
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
