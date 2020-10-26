@@ -6,28 +6,60 @@ import {loadImages} from '../../actions';
 import {Button, Container, Modal, Row} from "react-bootstrap";
 import ImageChild from "./Image";
 
+let comments
+
+function MyVerticallyCenteredModal(props) {
+
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Modal heading
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {comments}
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
+
 
 const ImageGrid = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [selectId, setSelectId] = useState();
-    console.log(selectId);
 
     useEffect(() => {
-        const URL = `https://boiling-refuge-66454.herokuapp.com/images/`;
-        const d = URL+selectId
-        console.log(d);
-        const fetchImage = async getImage => {
-            const response = await fetch(`${d}`);
-            const data = await response.json();
-            if (response.status >= 400) {
-                throw new Error(data.errors);
-            }
-            return data;
-        };
-
         loadImages()
 
-    }, [selectId])
+        let URL = `https://boiling-refuge-66454.herokuapp.com/images/`;
+        let d = URL + selectId
+        const fetchImage = async getImage => {
+
+            const response = await fetch(`${d}`);
+            const data = await response.json()
+
+            return data;
+        };
+        fetchImage().then(r => {
+            console.log(r);
+            r.comments.map((r) => {
+
+                comments.createElement('div').innerText = r.text
+
+                console.log(r.text);
+            })
+        })
+
+    }, [selectId, URL])
 
     const setModalShowApi = (id) => {
         setSelectId(id)
@@ -40,9 +72,9 @@ const ImageGrid = (props) => {
 
             <Row>
 
-                {images.map(image => (
-                    <Button key={image.id} variant="light" onClick={() => setModalShowApi(image.id)}>
-                        <ImageChild image={image}/>
+                {images.map((image, idex) => (
+                    <Button key={idex} variant="light">
+                        <ImageChild setModalShowApi={setModalShowApi} image={image}/>
                     </Button>
 
                 ))}
@@ -76,26 +108,3 @@ export default connect(
     mapDispatchToProps,
 )(ImageGrid);
 
-function MyVerticallyCenteredModal(props) {
-
-    return (
-        <Modal
-            {...props}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Modal heading
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                cosad
-            </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
-            </Modal.Footer>
-        </Modal>
-    );
-}

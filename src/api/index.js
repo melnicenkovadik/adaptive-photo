@@ -9,13 +9,6 @@ const fetchImages = async page => {
     }
     return data;
 };
-const fetchImage = async id => {
-    const response = await fetch(`${URL}:${id}`);
-    const data = await response.json();
-    if (response.status >= 400) {
-        throw new Error(data.errors);
-    }
-    return data;
-};
 
-export {fetchImages,fetchImage};
+
+export {fetchImages};
