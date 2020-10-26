@@ -10,11 +10,14 @@ import ImageChild from "./Image";
 const ImageGrid = (props) => {
     const [modalShow, setModalShow] = useState(false);
     const [selectId, setSelectId] = useState();
+    console.log(selectId);
 
     useEffect(() => {
-        const URL = `https://boiling-refuge-66454.herokuapp.com/images`;
+        const URL = `https://boiling-refuge-66454.herokuapp.com/images/`;
+        const d = URL+selectId
+        console.log(d);
         const fetchImage = async getImage => {
-            const response = await fetch(`${URL}:${selectId}`);
+            const response = await fetch(`${d}`);
             const data = await response.json();
             if (response.status >= 400) {
                 throw new Error(data.errors);
@@ -23,8 +26,8 @@ const ImageGrid = (props) => {
         };
 
         loadImages()
+
     }, [selectId])
-    console.log(selectId);
 
     const setModalShowApi = (id) => {
         setSelectId(id)
