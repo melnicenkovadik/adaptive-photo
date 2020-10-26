@@ -1,4 +1,4 @@
-import { IMAGES ,IMAGE} from '../constants';
+import { IMAGES } from '../constants';
 
 const loadImages = () => ({
     type: IMAGES.LOAD,
@@ -16,11 +16,11 @@ const setError = error => ({
 
 
 
-
-
 export {
     loadImages,
     setImages,
     setError,
+
+
 
 };

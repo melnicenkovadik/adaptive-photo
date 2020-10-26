@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -8,13 +8,28 @@ import ImageChild from "./Image";
 
 
 const ImageGrid = (props) => {
-    const [modalShow, setModalShow] = React.useState(false);
+    const [modalShow, setModalShow] = useState(false);
+    const [selectId, setSelectId] = useState();
 
     useEffect(() => {
+        const URL = `https://boiling-refuge-66454.herokuapp.com/images`;
+        const fetchImage = async getImage => {
+            const response = await fetch(`${URL}:${selectId}`);
+            const data = await response.json();
+            if (response.status >= 400) {
+                throw new Error(data.errors);
+            }
+            return data;
+        };
+
         loadImages()
-    }, [])
+    }, [selectId])
+    console.log(selectId);
 
-
+    const setModalShowApi = (id) => {
+        setSelectId(id)
+        setModalShow(true)
+    }
     const {images, loadImages} = props;
     return (
         <Container>
@@ -23,8 +38,8 @@ const ImageGrid = (props) => {
             <Row>
 
                 {images.map(image => (
-                    <Button key={image.id} variant="light" onClick={() => setModalShow(true)}>
-                        <ImageChild loadImages={loadImages} image={image}/>
+                    <Button key={image.id} variant="light" onClick={() => setModalShowApi(image.id)}>
+                        <ImageChild image={image}/>
                     </Button>
 
                 ))}
